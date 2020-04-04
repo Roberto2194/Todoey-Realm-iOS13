@@ -27,7 +27,6 @@ class TodoListViewController: SwipeTableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
         if let colourHex = selectedCategory?.colour {
             title = selectedCategory!.name
             guard let navBar = navigationController?.navigationBar else { fatalError("Navigation controller does not exist.")
@@ -42,13 +41,13 @@ class TodoListViewController: SwipeTableViewController {
         }
     }
     
-    //Mark - Tableview Datasource Methods
+    //MARK: - Tableview Datasource Methods
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return toDoItems?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = toDoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
@@ -60,13 +59,12 @@ class TodoListViewController: SwipeTableViewController {
         } else {
             cell.textLabel?.text = "No Items Added"
         }
-        
         return cell
     }
     
-    //Mark - TableView Delegate Methods
+    //MARK: - TableView Delegate Methods
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         if let item = toDoItems?[indexPath.row] {
             do {
                 try realm.write{
@@ -77,13 +75,11 @@ class TodoListViewController: SwipeTableViewController {
                 print("Error saving done status, \(error)")
             }
         }
-        
         tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
-        
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
@@ -109,7 +105,8 @@ class TodoListViewController: SwipeTableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    //Mark - Model Manipulation Methods
+    //MARK: - Model Manipulation Methods
+    
     func loadItems() {
         toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
@@ -128,9 +125,9 @@ class TodoListViewController: SwipeTableViewController {
     }
 }
 
+//MARK: - Searchbar delegate methods
 
-//Mark: - Searchbar delegate methods
-extension TodoListViewController: UISearchBarDelegate{
+extension TodoListViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         toDoItems = toDoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "title", ascending: true)
@@ -145,7 +142,5 @@ extension TodoListViewController: UISearchBarDelegate{
             }
         }
     }
-    
-    
     
 }
